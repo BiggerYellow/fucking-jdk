@@ -44,6 +44,7 @@ import jdk.internal.vm.annotation.ReservedStackAccess;
  * behavior and semantics as the implicit monitor lock accessed using
  * {@code synchronized} methods and statements, but with extended
  * capabilities.
+ * 可重入互斥锁，其基本语义和行为同使用synchronized方法和语句访问的隐式监视器锁一样，但是具有扩展功能
  *
  * <p>A {@code ReentrantLock} is <em>owned</em> by the thread last
  * successfully locking, but not yet unlocking it. A thread invoking
@@ -52,6 +53,11 @@ import jdk.internal.vm.annotation.ReservedStackAccess;
  * immediately if the current thread already owns the lock. This can
  * be checked using methods {@link #isHeldByCurrentThread}, and {@link
  * #getHoldCount}.
+ * ReentrantLock是上一次线程成功锁定但是未解锁所拥有的。
+ * 当没有其他线程拥有lock时，线程调用lock方法将成功返回获得了锁。
+ * 如果当前线程已经获取了锁，调用此方法将直接返回。
+ * 可以用isHeldByCurrentThread和getHoldCount方法进行检查
+ *
  *
  * <p>The constructor for this class accepts an optional
  * <em>fairness</em> parameter.  When set {@code true}, under
@@ -66,13 +72,20 @@ import jdk.internal.vm.annotation.ReservedStackAccess;
  * fair lock may obtain it multiple times in succession while other
  * active threads are not progressing and not currently holding the
  * lock.
+ * 此方法的构造器接受一个可选的fairness参数。当设置为true时，在处于竞争状态下，锁倾向授予等待时间最长的访问权。
+ * 否则锁不保证任何特殊的访问顺序。当多个线程访问时使用公平锁将比使用默认设置表现出降低的吞吐量。
+ * 但是在获取锁的时间上有较小的差异并保证没有饥饿。
+ * 不过要注意，公平锁不保证线程调度的公平。因此，使用公平锁的多个线程中的一个可以连续多次获得公平锁，而其他活动线程没有进展，也没有持有该锁。
+ *
  * Also note that the untimed {@link #tryLock()} method does not
  * honor the fairness setting. It will succeed if the lock
  * is available even if other threads are waiting.
+ * 注意不定时的tryLock()方法不遵守公平性设置。如果锁是可用的甚至其他线程正在等待的也将返回成功
  *
  * <p>It is recommended practice to <em>always</em> immediately
  * follow a call to {@code lock} with a {@code try} block, most
  * typically in a before/after construction such as:
+ * 总是推荐调用lock方法时紧跟try方法块，常用的结构如下
  *
  * <pre> {@code
  * class X {
@@ -93,14 +106,17 @@ import jdk.internal.vm.annotation.ReservedStackAccess;
  * class defines a number of {@code public} and {@code protected}
  * methods for inspecting the state of the lock.  Some of these
  * methods are only useful for instrumentation and monitoring.
+ * 除了实现lock接口，这个类定义一系列公共和保护方法来检查锁的状态。这些方法中有些只用于仪表和监控
  *
  * <p>Serialization of this class behaves in the same way as built-in
  * locks: a deserialized lock is in the unlocked state, regardless of
  * its state when serialized.
+ * 该类的序列化与内置锁的行为方式相同：反序列化的锁处于解锁状态，无论它序列化时的状态如何
  *
  * <p>This lock supports a maximum of 2147483647 recursive locks by
  * the same thread. Attempts to exceed this limit result in
  * {@link Error} throws from locking methods.
+ * 锁支持被同一个线程重复锁2147483647次。超过这个限制将抛移除
  *
  * @since 1.5
  * @author Doug Lea

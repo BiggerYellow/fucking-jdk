@@ -2104,6 +2104,7 @@ public class Thread implements Runnable {
 
     /**
      * Waits for this thread to terminate.
+     * 等待此线程终止
      *
      * <p> An invocation of this method behaves in exactly the same
      * way as the invocation

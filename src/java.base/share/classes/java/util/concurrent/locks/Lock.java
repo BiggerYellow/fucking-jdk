@@ -339,11 +339,14 @@ public interface Lock {
     /**
      * Returns a new {@link Condition} instance that is bound to this
      * {@code Lock} instance.
+     * 返回一个绑定在这个锁实例上的新条件实例
      *
      * <p>Before waiting on the condition the lock must be held by the
      * current thread.
      * A call to {@link Condition#await()} will atomically release the lock
      * before waiting and re-acquire the lock before the wait returns.
+     * 在等待这个条件之前，当前线程必须持有锁。
+     * 调用Condition#await()方法将在等待之前自动解锁，并在等待返回之前重新获取锁
      *
      * <p><b>Implementation Considerations</b>
      *
